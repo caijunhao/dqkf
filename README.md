@@ -6,3 +6,6 @@ This repository is a python implementation of dual quaternion Kalman filter base
 4. [Estimating SE(3) elements using a dual quaternion based linear Kalman filter](http://www.roboticsproceedings.org/rss12/p13.pdf)
 
 The bunny mesh model is from [the Standford 3D Scanning Repository](http://graphics.stanford.edu/data/3Dscanrep/).
+
+Visualization of the estimation
+![](doc/output.gif)

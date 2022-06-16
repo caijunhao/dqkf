@@ -9,7 +9,7 @@ class DualQuaternionKalmanFilter(object):
     Implementation of dual quaternion kalman filter based on the following paper
     https://ieeexplore.ieee.org/abstract/document/1603413
     """
-    def __init__(self, max_vec=20, th_quat=1e-4, rho=1):
+    def __init__(self, max_vec=20, th_quat=1e-5, rho=1):
         self.max_vec = max_vec
         self.th_quat = th_quat
         self.rho = rho

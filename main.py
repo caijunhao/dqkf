@@ -4,8 +4,6 @@ from matplotlib import pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
 import numpy as np
 import open3d as o3d
-import copy
-import time
 
 
 def main():
@@ -19,7 +17,7 @@ def main():
     pose_g[0:3, 0:3], pose_g[0:3, 3] = ori_g.as_mat(), pos_g
     print('ground truth quaternion: {}'.format(ori_g))
     m = o3d.io.read_triangle_mesh('assets/bunny.obj')
-    pcr = np.asarray(m.sample_points_uniformly(number_of_points=50).points)
+    pcr = np.asarray(m.sample_points_uniformly(number_of_points=500).points)
     pcb = pcr @ ori_g.as_mat().T + pos_g.reshape(1, 3)
     vs = np.asarray(m.vertices)
     pr = vs + np.random.uniform(low=-vert_noise, high=vert_noise, size=vs.shape)
