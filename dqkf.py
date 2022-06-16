@@ -1,3 +1,4 @@
+from utils import Rotation
 from scipy.linalg import block_diag
 import numpy as np
 import quaternion as qtn
@@ -8,7 +9,7 @@ class DualQuaternionKalmanFilter(object):
     Implementation of dual quaternion kalman filter based on the following paper
     https://ieeexplore.ieee.org/abstract/document/1603413
     """
-    def __init__(self, max_vec=20, th_quat=1e-5, rho=1):
+    def __init__(self, max_vec=20, th_quat=1e-4, rho=1):
         self.max_vec = max_vec
         self.th_quat = th_quat
         self.rho = rho
@@ -27,11 +28,13 @@ class DualQuaternionKalmanFilter(object):
         i, j = i[flag], j[flag]
         prv = pr[i] - pr[j]
         pbv = pb[i] - pb[j]
+        mpr, mpb = np.mean(pr, axis=0), np.mean(pb, axis=0)
         curr_quat = np.random.rand(4)
         curr_quat = curr_quat / np.linalg.norm(curr_quat)
         curr_cov_quat = np.eye(4) * 100
         error = 1e7
         i = 0
+        ts, rs = list(), list()
         while error > self.th_quat:
             rv, bv = self.sample_vectors(prv, pbv)
             num_vec = rv.shape[0]
@@ -49,9 +52,12 @@ class DualQuaternionKalmanFilter(object):
             curr_quat = next_quat
             curr_cov_quat = next_cov_quat / norm
             i += 1
-        rot = qtn.as_rotation_matrix(qtn.from_float_array(curr_quat))
-        trans = np.mean(pb, axis=0) - rot @ np.mean(pr, axis=0)
-        return trans, curr_quat
+            r = Rotation.from_quat(curr_quat)
+            rot = r.as_mat()
+            trans = mpb - rot @ mpr
+            rs.append(r)
+            ts.append(trans)
+        return ts, rs
 
     def sample_vectors(self, pv, qv):
         num_vec = pv.shape[0]
